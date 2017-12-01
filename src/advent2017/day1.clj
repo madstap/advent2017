@@ -60,14 +60,13 @@
   (parse (slurp "resources/day1.txt")))
 
 (defn cycled-pairs [xs]
-  (let [pairs (filter (partial apply =) (partition 2 1 xs))
-        end-pair (let [[a z] [(first xs) (last xs)]]
-                   (when (= a z) (list a z)))]
-    (comfy/conj-some pairs end-pair)))
+  (-> (partition 2 1 xs) (conj (list (first xs) (last xs)))))
+
+(defn sum-of-equal-pairs [pairs]
+  (transduce (comp (filter (partial apply =)) (map first)) + pairs))
 
 (defn p1 [xs]
-  (transduce (map first) + (cycled-pairs xs)))
-
+  (sum-of-equal-pairs (cycled-pairs xs)))
 
 (comment
 
@@ -80,5 +79,54 @@
   (= 9 (p1 [9 1 2 1 2 1 2 9]))
 
   (p1 input) ;=> 1216
+
+  )
+
+;; --- Part Two ---
+
+;; You notice a progress bar that jumps to 50% completion. Apparently,
+;; the door isn't yet satisfied, but it did emit a star as
+;; encouragement. The instructions change:
+
+;; Now, instead of considering the next digit, it wants you to
+;; consider the digit halfway around the circular list. That is, if
+;; your list contains 10 items, only include a digit in your sum if
+;; the digit 10/2 = 5 steps forward matches it. Fortunately, your list
+;; has an even number of elements.
+
+;; For example:
+
+;; 1212 produces 6: the list contains 4 items, and all four digits match the digit 2 items ahead.
+
+;; 1221 produces 0, because every comparison is between a 1 and a 2.
+
+;; 123425 produces 4, because both 2s match each other, but no other digit has a match.
+
+;; 123123 produces 12.
+
+;; 12131415 produces 4.
+
+;; What is the solution to your new captcha?
+
+(defn halfway-pairs [xs]
+  (let [[a b] (split-at (/ (count xs) 2) xs)]
+    (map vector xs (concat b a))))
+
+(defn p2 [xs]
+  (sum-of-equal-pairs (halfway-pairs xs)))
+
+(comment
+
+  (= 6 (p2 [1 2 1 2]))
+
+  (zero? (p2 [1 2 2 1]))
+
+  (= 4 (p2 [1 2 3 4 2 5]))
+
+  (= 12 (p2 [1 2 3 1 2 3]))
+
+  (= 4 (p2 [1 2 1 3 1 4 1 5]))
+
+  (p2 input) ;=> 1072
 
   )
