@@ -32,18 +32,14 @@
 
   )
 
-(defn whole-number? [n]
-  (== n (Math/floor n)))
-
-(defn divide-evenly
-  [x y]
-  (let [z (/ x y)]
-    (when (whole-number? z) z)))
+(defn divisible? [x y]
+  (zero? (rem x y)))
 
 (defn checksum2 [spreadsheet]
   (transduce (comp (mapcat #(combo/combinations % 2))
                    (map (partial sort >))
-                   (keep (partial apply divide-evenly)))
+                   (filter (fn [[x y]] (divisible? x y)))
+                   (map (fn [[x y]] (/ x y))))
              +
              spreadsheet))
 
