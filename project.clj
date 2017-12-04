@@ -5,5 +5,6 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.9.0-RC2"]
                  [org.clojure/math.combinatorics "0.1.4"]
+                 [net.cgrand/xforms "0.15.0"]
                  [madstap/comfy "1.0.4"]
                  [medley "1.0.0"]])
