@@ -67,3 +67,23 @@
   (solve1 input) ;=> 339351
 
   )
+
+(defn solve2 [in]
+  (loop [instructions in, steps 0, pos 0]
+    (if-not (contains? instructions pos)
+      steps
+      (let [offset (get instructions pos)]
+        (recur (update instructions pos (if (>= offset 3) dec inc))
+               (inc steps)
+               (+ pos offset))))))
+
+(deftest two
+  (is (= 10 (solve2 [0 3 0 1 -3]))))
+
+(comment
+
+  "Elapsed time: 12174.139301 msecs"
+
+  (time (solve2 input)) ;=> 24315397
+
+  )
