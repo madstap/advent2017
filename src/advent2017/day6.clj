@@ -118,18 +118,18 @@
 
 
 (defn solve2 [in]
-  (loop [seen {}, current in, steps 0]
-    (if (contains? seen current)
-      (- steps (get seen current))
-      (recur (assoc seen current steps)
-             (redistribute current)
-             (inc steps)))))
+  (reduce (fn [[seen current] step]
+            (if (contains? seen current)
+              (reduced (- step (get seen current)))
+              [(assoc seen current step) (redistribute current)]))
+          [{} in]
+          (range)))
 
 (deftest two
   (is (= 4 (solve2 [0 2 7 0]))))
 
 (comment
 
-  (solve2 input) ;=> 2392
+  (time (solve2 input)) ;=> 2392
 
   )
