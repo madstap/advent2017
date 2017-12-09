@@ -53,15 +53,6 @@
 ;; score of the group that immediately contains it. (The outermost
 ;; group gets a score of 1.)
 
-;; {}, score of 1.
-;; {{{}}}, score of 1 + 2 + 3 = 6.
-;; {{},{}}, score of 1 + 2 + 2 = 5.
-;; {{{},{},{{}}}}, score of 1 + 2 + 3 + 3 + 3 + 4 = 16.
-;; {<a>,<a>,<a>,<a>}, score of 1.
-;; {{<ab>},{<ab>},{<ab>},{<ab>}}, score of 1 + 2 + 2 + 2 + 2 = 9.
-;; {{<!!>},{<!!>},{<!!>},{<!!>}}, score of 1 + 2 + 2 + 2 + 2 = 9.
-;; {{<a!>},{<a!>},{<a!>},{<ab>}}, score of 1 + 2 = 3.
-
 ;; What is the total score for all groups in your input?
 
 (ns advent2017.day9
@@ -105,5 +96,47 @@
 (comment
 
   (solve1 input) ;=> 12505
+
+  )
+
+;; --- Part Two ---
+
+;; Now, you're ready to remove the garbage.
+
+;; To prove you've removed it, you need to count all of the characters
+;; within the garbage. The leading and trailing < and > don't count,
+;; nor do any canceled characters or the ! doing the canceling.
+
+;; How many non-canceled characters are within the garbage in your puzzle input?
+
+(defn solve2 [s]
+  (first
+   (reduce (fn [[acc garbage? cancelled?] x]
+             (if garbage?
+               (if cancelled?
+                 [acc garbage? false]
+                 (case x
+                   \! [acc true true]
+                   \> [acc false false]
+                   [(inc acc) true false]))
+               (if (= \< x)
+                 [acc true false]
+                 [acc false false])))
+           [0 false false]
+           s)))
+
+(deftest two
+  (are [s characters] (= (solve2 s) characters)
+    "<>" 0
+    "<random characters>" 17
+    "<<<<>" 3
+    "<{!>}>" 2
+    "<!!>" 0
+    "<!!!>>" 0
+    "<{o\"i!a,<{i<a>" 10))
+
+(comment
+
+  (solve2 input) ;=> 6671
 
   )
