@@ -160,7 +160,6 @@ ws = #'\\s*'
    (d/q '[:find ?name
           :where
           [?e :program/name ?name]
-          [?e :program/children]
           (not [_ :program/children ?e])]
         database)))
 
